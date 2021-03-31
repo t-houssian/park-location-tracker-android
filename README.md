@@ -7,5 +7,4 @@ This app is written in Kotlin
 - Riley Dixon
 - Tyler Houssian
 - Adam Rathjen
-- Cameron Hansen
 - Joseph Payne
