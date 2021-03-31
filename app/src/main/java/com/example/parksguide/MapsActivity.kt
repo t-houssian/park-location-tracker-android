@@ -5,11 +5,13 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
@@ -36,6 +38,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private var locationUpdateState = false
+    var tracking = false
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -65,29 +68,46 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
+
+        val button_tracking = findViewById<Button>(R.id.button_tracking)
+        val button_mapClear = findViewById<Button>(R.id.button_mapClear)
         fab.setOnClickListener {
             loadPlacePicker()
         }
-        createLocationRequest()
-    }
+        button_tracking.setOnClickListener {
+            tracking = !tracking
+            if (tracking) {
+                button_tracking.text = "Stop Tracking"
+                button_tracking.setBackgroundColor(Color.RED)
+            } else {
+                button_tracking.text = "Start Tracking"
+                button_tracking.setBackgroundColor(Color.GREEN)
+            }
+            button_mapClear.setOnClickListener {
+                map.clear()
+            }
+        }
+            createLocationRequest()
+        }
 
 
 
 
     private fun placeMarkerOnMap(location: LatLng) {
+        if(tracking){
+            val markerOptions = MarkerOptions().position(location)
+            if (marker_count < 3) {
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+            }
+            else {
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+            }
+            marker_count += 1
+            val titleStr = getAddress(location)  // add these two lines
+            markerOptions.title(titleStr)
 
-        val markerOptions = MarkerOptions().position(location)
-        if (marker_count < 3) {
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+            map.addMarker(markerOptions)
         }
-        else {
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-        }
-        marker_count += 1
-        val titleStr = getAddress(location)  // add these two lines
-        markerOptions.title(titleStr)
-
-        map.addMarker(markerOptions)
     }
 
     /**
