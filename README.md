@@ -4,7 +4,7 @@ This is an android app that tracks your location of where you have been and draw
 
 # Development Environment
 - Kotlin
-- Android Stuidio
+- Android Studio
 - Google Maps API
 
 ## Project Maintainers:
